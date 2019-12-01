@@ -1,12 +1,103 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import SearchPage from "./components/search/search";
+import LoadingPage from "./components/loading/loading";
+import FavoritesPage from "./components/favorites/favorites";
+import RandomPage from "./components/random/random";
+import {createAppContainer} from "react-navigation";
+import {createStackNavigator} from "react-navigation-stack";
+import {createBottomTabNavigator} from "react-navigation-tabs";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import * as Font from "expo-font";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+
+const SearchStack = createStackNavigator(
+    {Search:SearchPage,
+    Loading: LoadingPage,
+    Favorites: FavoritesPage},
+    {
+      initialRouteName: "Search",
+      header:null,
+      headerMode: "none"
+    }
+);
+
+const FavoritesStack = createStackNavigator(
+    {
+      Favorites:FavoritesPage
+    },
+    {
+      initialRouteName: "Favorites",
+      header: null,
+      headerMode: "none"
+    }
+);
+const RandomStack = createStackNavigator(
+    {
+        Random:RandomPage
+    },{
+        initialRouteName:"Random",
+        header:null,
+        headerMode:"none"
+    }
+)
+
+
+const bottomTabNavigator = createBottomTabNavigator({
+    Search: {
+  screen: SearchStack,
+      navigationOptions: {
+    tabBarIcon: ({ tintColor }) => (
+        <Icon name="search" size={32} color={tintColor} />
+    )
+  }
+},
+Favorites: {
+  screen: FavoritesStack,
+      navigationOptions: {
+    tabBarIcon: ({ tintColor }) => (
+        <Icon name="favorite" size={32} color={tintColor} />
+    )
+  }
+},
+    Random:{
+        screen: RandomStack,
+        navigationOptions:{
+            tabBarIcon: ({ tintColor }) => (
+                <Icon name="cached" size={32} color={tintColor} />
+            )
+        }
+    }
+},
+{
+  initialRouteName: "Search",
+      tabBarOptions: {
+  activeTintColor: "#F3A3A3",
+      height: 85
+}
+}
+);
+
+const AppContainer = createAppContainer(bottomTabNavigator);
+
+export default class App extends Component {
+    state = {
+       fontLoaded:false
+   };
+   async componentDidMount() {
+        await Font.loadAsync({
+            roboto: require("./assets/fonts/roboto-regular.ttf")
+    });
+    this.setState({fontLoaded: true});
+    }
+  render(){
+        if(this.state.fontLoaded){
+            console.log("font is loaded");
+            return <AppContainer/>;
+        }else{
+            return <LoadingPage/>;
+        }
+    }
 }
 
 const styles = StyleSheet.create({
