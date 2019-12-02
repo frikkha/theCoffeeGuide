@@ -9,6 +9,8 @@ import {createStackNavigator} from "react-navigation-stack";
 import {createBottomTabNavigator} from "react-navigation-tabs";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as Font from "expo-font";
+import { Asset } from 'expo-asset';
+import * as Colors  from "./styles/colors";
 
 
 const SearchStack = createStackNavigator(
@@ -40,7 +42,7 @@ const RandomStack = createStackNavigator(
         header:null,
         headerMode:"none"
     }
-)
+);
 
 
 const bottomTabNavigator = createBottomTabNavigator({
@@ -72,25 +74,28 @@ Favorites: {
 {
   initialRouteName: "Search",
       tabBarOptions: {
-  activeTintColor: "#F3A3A3",
+  activeTintColor: Colors.BROWN_RED,
+          inactiveTintColor: Colors.BROWN_LIGHT,
+          activeBackgroundColor:Colors.BEIGE,
+          inactiveBackgroundColor:Colors.BEIGE,
       height: 85
 }
-}
-);
+});
 
 const AppContainer = createAppContainer(bottomTabNavigator);
 
 export default class App extends Component {
     state = {
-       fontLoaded:false
+       fontLoaded:false,
    };
-   async componentDidMount() {
+    async componentDidMount() {
         await Font.loadAsync({
-            roboto: require("./assets/fonts/roboto-regular.ttf")
-    });
-    this.setState({fontLoaded: true});
+            roboto: require("./assets/fonts/roboto-regular.ttf"),
+        });
+        this.setState({fontLoaded:true})
     }
-  render(){
+
+    render(){
         if(this.state.fontLoaded){
             console.log("font is loaded");
             return <AppContainer/>;
