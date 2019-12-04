@@ -32,10 +32,11 @@ export default class Search extends Component {
       searchWord: "",
       searchResults: null,
       searched: false,
-      allCoffees:
-        [{ coffeeId: 1, coffeeName: "Espresso" },
-        { coffeeId: 2, coffeeName: "Americano" },
-            {coffeeId: 3, coffeeName: "Latte"}]
+      allCoffees: [
+        { coffeeId: "1", coffeeName: "Espresso" },
+        { coffeeId: "2", coffeeName: "Americano" },
+        { coffeeId: "3", coffeeName: "Latte" }
+      ]
     };
   }
 

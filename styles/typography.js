@@ -11,7 +11,7 @@ const FONT_WEIGHT_MEDIUM = "500";
 const FONT_WEIGHT_BOLD = "800";
 
 // FONT SIZE
-const FONT_SIZE_36 = 36;
+const FONT_SIZE_32 = 32;
 const FONT_SIZE_24 = 24;
 const FONT_SIZE_18 = 18;
 const FONT_SIZE_16 = 16;
@@ -23,19 +23,19 @@ const FONT_SIZE_10 = 10;
 export const FONT_H2_ORANGE = {
   fontFamily: FONT_FAMILY_HEADINGS,
   fontWeight: FONT_WEIGHT_MEDIUM,
-  fontSize: FONT_SIZE_36,
+  fontSize: FONT_SIZE_32,
   color: Colors.ORANGE_DARK
 };
 export const FONT_H2_BROWN = {
   fontFamily: FONT_FAMILY_HEADINGS,
   fontWeight: FONT_WEIGHT_MEDIUM,
-  fontSize: FONT_SIZE_36,
+  fontSize: FONT_SIZE_32,
   color: Colors.BROWN_DARK
 };
 export const FONT_H2_BROWN_LOADING = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_36,
-    color: Colors.BROWN_DARK
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_32,
+  color: Colors.BROWN_DARK
 };
 export const FONT_H4_PINK = {
   fontFamily: FONT_FAMILY_HEADINGS,
