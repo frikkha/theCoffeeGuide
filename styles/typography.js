@@ -52,7 +52,7 @@ export const FONT_H4_GREY = {
 
 export const FONT_MED_BROWN_DARK = {
   fontFamily: FONT_FAMILY_TEXT,
-  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontWeight: FONT_WEIGHT_BOLD,
   fontSize: FONT_SIZE_16,
   color: Colors.BROWN_DARK
 };

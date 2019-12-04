@@ -13,7 +13,7 @@ export default class Random extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coffees: ["Espresso", "Amercano", "Cappucino", "Macchiato", "Latte"],
+      coffees: ["Espresso", "Americano", "Cappuccino", "Macchiato", "Latte"],
       randomNumber: null
     };
     this.random = this.random.bind(this);
@@ -24,8 +24,10 @@ export default class Random extends Component {
   render() {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flex: 2, marginTop: 90 }}>
-          <Text style={Typography.FONT_H2_ORANGE}> Coffee suggestions </Text>
+        <View style={{ flex: 2}}>
+          <Text style={[styles.heading, Typography.FONT_H2_ORANGE]}>
+            Coffee suggestions{" "}
+          </Text>
         </View>
         <View style={{ flex: 2 }}>
           <TouchableOpacity
@@ -56,6 +58,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.BEIGE
   },
+  heading: {
+    marginTop: 80,
+    alignItems: "center"
+  },
   randomButton: {
     width: 203,
     height: 38,
@@ -63,7 +69,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.ORANGE_LIGHT,
     marginTop: 6,
     alignSelf: "center"
-    //marginBottom: 50
   },
   buttonText: {
     color: Colors.BROWN_DARK,
