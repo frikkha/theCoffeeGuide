@@ -7,7 +7,7 @@ import * as Typography from "../../styles/typography";
 export default class Loading extends Component {
     render() {
         return (<ScrollView contentContainerStyle={styles.container}>
-            <Text style={Typography.FONT_H2_BROWN}> The Coffee Guide </Text>
+            <Text style={Typography.FONT_H2_BROWN_LOADING}> The Coffee Guide </Text>
         <View style={styles.imageBox}>
             <Image source={require("../../assets/icon-coffee.png")} />
         </View>

@@ -1,10 +1,9 @@
 import * as Colors from "./colors";
 
 // FONT FAMILY
-const FONT_FAMILY_TEXT = 'roboto';
+const FONT_FAMILY_TEXT = "roboto";
 // should actually be quando but cannot import it:(
-const FONT_FAMILY_HEADINGS = 'roboto';
-
+const FONT_FAMILY_HEADINGS = "quando";
 
 // FONT WEIGHT
 const FONT_WEIGHT_LIGHT = "300";
@@ -22,33 +21,44 @@ const FONT_SIZE_10 = 10;
 
 // FONT STYLE
 export const FONT_H2_ORANGE = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_36,
-    color: Colors.ORANGE_DARK
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_36,
+  color: Colors.ORANGE_DARK
 };
 export const FONT_H2_BROWN = {
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_36,
+  color: Colors.BROWN_DARK
+};
+export const FONT_H2_BROWN_LOADING = {
     fontWeight: FONT_WEIGHT_MEDIUM,
     fontSize: FONT_SIZE_36,
     color: Colors.BROWN_DARK
 };
 export const FONT_H4_PINK = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_18,
-    color: Colors.PINK
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_18,
+  color: Colors.PINK
 };
 export const FONT_H4_GREY = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_18,
-    color: Colors.GREY
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_18,
+  color: Colors.GREY
 };
 
 export const FONT_MED_BROWN_DARK = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_16,
-    color: Colors.BROWN_DARK
+  fontFamily: FONT_FAMILY_TEXT,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_16,
+  color: Colors.BROWN_DARK
 };
 export const FONT_SMALL_BROWN_RED = {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-    fontSize: FONT_SIZE_12,
-    color: Colors.BROWN_RED
+  fontFamily: FONT_FAMILY_TEXT,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_12,
+  color: Colors.BROWN_RED
 };
