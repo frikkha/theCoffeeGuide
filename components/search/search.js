@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import {
   Text,
+  AsyncStorage,
   View,
   Image,
   StyleSheet,
-  ScrollView,
-  LayoutAnimation,
   TouchableOpacity,
   FlatList,
   Keyboard,
@@ -17,17 +16,44 @@ import * as Typography from "../../styles/typography";
 import { TouchableWithoutFeedback } from "react-native-web";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-function CoffeeItem({ coffeeName }) {
+function CoffeeItem({ coffeeId, coffeeName, favoritesId }) {
+  let favorite;
+  if (favoritesId.includes(coffeeId)) {
+    favorite = true;
+  }
   return (
     <View style={styles.coffeeItem}>
-      <View style={{ flexDirection: "row", marginTop: 10 }}>
-        <Image
-          source={require("../../assets/icon-coffee.png")}
-          style={{ width: 70, height: 70 }}
-        />
-        <Text style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}>
-          {coffeeName}
-        </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 10,
+          justifyContent: "space-between"
+        }}
+      >
+        <View style={{ flexDirection: "row" }}>
+          <Image
+            source={require("../../assets/icon-coffee.png")}
+            style={{ width: 70, height: 70 }}
+          />
+          <Text style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}>
+            {coffeeName}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginRight: 15
+          }}
+        >
+          <TouchableOpacity>
+            {favorite ? (
+              <Icon name="favorite" size={35} color={Colors.BROWN_RED} />
+            ) : (
+              <Icon name="favorite-border" size={35} color={Colors.BROWN_RED} />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
       <View
         style={{
@@ -50,6 +76,7 @@ export default class Search extends Component {
       searchWord: "",
       searchResults: null,
       searched: false,
+      favoritesId: [],
       allCoffees: [
         { coffeeId: "1", coffeeName: "Espresso" },
         { coffeeId: "2", coffeeName: "Americano" },
@@ -61,6 +88,30 @@ export default class Search extends Component {
     };
   }
 
+  componentDidMount = async () => {
+    this.getFavorites();
+  };
+
+  async storeFavorites(coffeeItem) {
+    try {
+      const favorites = await AsyncStorage.getItem("favorites");
+      const favoritesParsed = JSON.parse(favorites);
+      favoritesParsed.push(coffeeItem);
+      AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
+    } catch (error) {
+      console.log("Error storing favorites: ", error.message());
+    }
+  }
+
+  async getFavorites() {
+    try {
+      const favorites = await AsyncStorage.getItem("favorites");
+      const favoritesParsed = JSON.parse(favorites);
+      this.setState({ favoritesId: favoritesParsed });
+    } catch (error) {
+      console.log("Error getting favorites: ", error.message());
+    }
+  }
   render() {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -92,6 +143,7 @@ export default class Search extends Component {
                     <CoffeeItem
                       coffeeId={item.coffeeId}
                       coffeeName={item.coffeeName}
+                      favoritesId={this.state.favoritesId}
                     />
                   </TouchableOpacity>
                 )}
