@@ -1,0 +1,8 @@
+
+# Default ignored files
+/workspace.xml
+*.iml
+misc.xml
+modules.xml
+vcs.xml
+
