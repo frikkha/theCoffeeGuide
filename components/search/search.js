@@ -16,59 +16,6 @@ import * as Typography from "../../styles/typography";
 import { TouchableWithoutFeedback } from "react-native-web";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-function CoffeeItem({ coffeeId, coffeeName, favoritesId }) {
-  let favorite;
-  if (favoritesId.includes(coffeeId)) {
-    favorite = true;
-  }
-  return (
-    <View style={styles.coffeeItem}>
-      <View
-        style={{
-          flexDirection: "row",
-          marginTop: 10,
-          justifyContent: "space-between"
-        }}
-      >
-        <View style={{ flexDirection: "row" }}>
-          <Image
-            source={require("../../assets/icon-coffee.png")}
-            style={{ width: 70, height: 70 }}
-          />
-          <Text style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}>
-            {coffeeName}
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginRight: 15
-          }}
-        >
-          <TouchableOpacity>
-            {favorite ? (
-              <Icon name="favorite" size={35} color={Colors.BROWN_RED} />
-            ) : (
-              <Icon name="favorite-border" size={35} color={Colors.BROWN_RED} />
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          marginBottom: 10
-        }}
-      >
-        <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
-        <Icon name="arrow-drop-down" size={35} color={Colors.BROWN_RED} />
-      </View>
-    </View>
-  );
-}
 export default class Search extends Component {
   constructor(props) {
     super(props);
@@ -95,24 +42,106 @@ export default class Search extends Component {
   async storeFavorites(coffeeItem) {
     try {
       const favorites = await AsyncStorage.getItem("favorites");
-      const favoritesParsed = JSON.parse(favorites);
-      favoritesParsed.push(coffeeItem);
-      AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
-    } catch (error) {
-      console.log("Error storing favorites: ", error.message());
-    }
+      if (favorites !== null) {
+        let favoritesParsed = JSON.parse(favorites);
+        favoritesParsed.push(coffeeItem);
+        AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
+        this.setState({ favoritesId: favoritesParsed });
+      } else {
+        const favorites = [coffeeItem];
+        AsyncStorage.setItem("favorites", JSON.stringify(favorites));
+        this.setState({ favoritesId: favorites });
+      }
+    } catch (error) {}
   }
 
+  async removeFavorite(coffeeItem) {
+    try {
+      const favorites = await AsyncStorage.getItem("favorites");
+      if (favorites !== null) {
+        let favoritesParsed = JSON.parse(favorites);
+        const indexOfCoffeeItem = favoritesParsed.indexOf(coffeeItem);
+        favoritesParsed.splice(indexOfCoffeeItem, 1);
+        AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
+        this.setState({ favoritesId: favoritesParsed });
+      }
+    } catch (error) {}
+  }
   async getFavorites() {
     try {
       const favorites = await AsyncStorage.getItem("favorites");
-      const favoritesParsed = JSON.parse(favorites);
-      this.setState({ favoritesId: favoritesParsed });
-    } catch (error) {
-      console.log("Error getting favorites: ", error.message());
-    }
+      if (favorites !== null) {
+        const favoritesParsed = JSON.parse(favorites);
+        this.setState({ favoritesId: favoritesParsed });
+      }
+    } catch (error) {}
   }
+
   render() {
+    const CoffeeItem = ({ coffeeId, coffeeName }) => {
+      let favorite;
+      if (this.state.favoritesId.includes(coffeeId)) {
+        favorite = true;
+      }
+      return (
+        <View style={styles.coffeeItem}>
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 10,
+              justifyContent: "space-between"
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={require("../../assets/icon-coffee.png")}
+                style={{ width: 70, height: 70 }}
+              />
+              <Text
+                style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}
+              >
+                {coffeeName}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                marginRight: 15
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  {
+                    favorite
+                      ? this.removeFavorite(coffeeId)
+                      : this.storeFavorites(coffeeId);
+                  }
+                  favorite = !favorite;
+                }}
+              >
+                <Icon
+                  name={favorite ? "favorite" : "favorite-border"}
+                  size={35}
+                  color={Colors.BROWN_RED}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              marginBottom: 10
+            }}
+          >
+            <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
+            <Icon name="arrow-drop-down" size={35} color={Colors.BROWN_RED} />
+          </View>
+        </View>
+      );
+    };
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
@@ -138,12 +167,12 @@ export default class Search extends Component {
             <SafeAreaView style={styles.containerResults}>
               <FlatList
                 data={this.state.allCoffees}
+                extraData={this.state}
                 renderItem={({ item }) => (
                   <TouchableOpacity>
                     <CoffeeItem
                       coffeeId={item.coffeeId}
                       coffeeName={item.coffeeName}
-                      favoritesId={this.state.favoritesId}
                     />
                   </TouchableOpacity>
                 )}
