@@ -59,3 +59,14 @@ router.get('https://￿￿api.edamam.com/search?q=Espresso+Martini&app_id=5ce995
 });
 
 
+// Code for posting in MongoDB after retrieving from API.
+// Import Coffee Model
+router.post('/', (req, res) => {
+    const newCoffee = new Coffee({
+        Name: 'CoffeeName',
+        ImagePath: 'Path',
+        Content: 'Ingredients',
+        Hits: 'Number of hits'
+    });
+    newCoffee.save().then(coffee => res.json(coffee));
+});

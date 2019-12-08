@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Coffee Model
-const Coffee = require('../../models/coffee.js');
+const Coffee = require('../../models/Coffee.js');
 
 // @route GET api/coffee
 // @desc Get all coffees
@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
             res.json(coffees);
         })
 });
-
 
 // @route GET api/coffee/q=name
 // @desc Get all coffees that matches the  string
