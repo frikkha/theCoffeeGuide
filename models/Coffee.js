@@ -12,7 +12,7 @@ const CoffeeSchema = new Schema ({
         required: true
     },
     Content: {
-        type: String,
+        type: Array,
         required: true
     },
     Hits: {
