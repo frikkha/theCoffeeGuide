@@ -62,23 +62,29 @@ const fetchCoffee = async (searchWord) => {
         let matches = res.data;
         let exactMatch = ':(';
         for (let i = 0; i < matches.hits.length; i++) {
+            //console.log(matches.hits[i].recipe);
             let label = matches.hits[i].recipe.label;
             if (searchWord.match(label)) {
                 exactMatch = formatItem(matches.hits[i]);
                 break
             }
         }
+        console.log(exactMatch);
         return exactMatch
     }).catch(err => {console.log(err)});
-    console.log('From Edamam: ' + result);
     return result
 };
 
 const formatItem = (item) => {
+    let content = '';
+    let l = item.recipe.ingredientLines;
+    for (let i = 0; i < l.length; i++){
+        content += item.recipe.ingredientLines[i]+';'
+    }
     let formattedItem = {
         Name: item.recipe.label,
         ImagePath: item.recipe.image,
-        Content: item.recipe.ingredientLines
+        Content: content
     };
     return formattedItem
 };
@@ -107,21 +113,14 @@ app.post('/', (req, res) => {
     newCoffee.save().then(coffee => res.json('The item added successfully: ' + coffee)).catch(err => {console.log('Error: ' +err)});
 });
 
-items = ['Vietnamese Ice Coffee',
-'Thai Iced Coffee',
-'Mocha Latte',
-'Hot Peppermint Mocha',
-'Espresso Frappe',
-'Vanilla Bean Iced Coffee',
-'Chocolate Espresso Bellini',
-'Baileys Espresso Martini',
-'Baileys Spiced Coffee',
-'Mocha Latte',
-'Irish Coffee',
-'Espresso Martini']
+items = [
+    'Crazy Coffee'
+];
 
 for ( let i = 0; i < items.length; i++) {
     postItem(items[i]).then(() => console.log("Made it ")).catch(err => {
         console.log("Erroreruuuud: " + err)
     });
 }
+
+//fetchCoffee('Espresso Martini').then(r => console.log(r) );
