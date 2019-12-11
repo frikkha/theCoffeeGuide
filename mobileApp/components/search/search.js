@@ -11,6 +11,7 @@ import {
   TextInput,
   SafeAreaView
 } from "react-native";
+import Validate from "./searchValidation.js";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
 import { TouchableWithoutFeedback } from "react-native-web";
@@ -21,22 +22,17 @@ export default class Search extends Component {
     super(props);
     this.state = {
       searchWord: "",
+        searchError:"",
       searchResults: null,
       searched: false,
       favoritesId: [],
-      allCoffees: [
-        { coffeeId: "1", coffeeName: "Espresso" },
-        { coffeeId: "2", coffeeName: "Americano" },
-        { coffeeId: "3", coffeeName: "Latte" },
-        { coffeeId: "4", coffeeName: "Mokka" },
-        { coffeeId: "5", coffeeName: "Irish" },
-        { coffeeId: "6", coffeeName: "Marocchino" }
-      ]
-    };
+      allCoffees: null,
+    };this.validateSearch = this.validateSearch.bind(this);
   }
 
   componentDidMount = async () => {
     this.getFavorites();
+    this.getAllCoffee();
   };
 
   async storeFavorites(coffeeItem) {
@@ -52,7 +48,8 @@ export default class Search extends Component {
         AsyncStorage.setItem("favorites", JSON.stringify(favorites));
         this.setState({ favoritesId: favorites });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error storing favorites: ", error);}
   }
 
   async removeFavorite(coffeeItem) {
@@ -65,7 +62,7 @@ export default class Search extends Component {
         AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
         this.setState({ favoritesId: favoritesParsed });
       }
-    } catch (error) {}
+    } catch (error) { console.log("Error removing favorites: ", error);}
   }
   async getFavorites() {
     try {
@@ -74,11 +71,77 @@ export default class Search extends Component {
         const favoritesParsed = JSON.parse(favorites);
         this.setState({ favoritesId: favoritesParsed });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error getting favorites: ", error);
+    }
   }
 
+  updateSearchText = searchWord => {
+      this.setState({searchWord, searched:false});
+  };
+
+  async validateSearch(){
+      Keyboard.dismiss();
+      const searchError = Validate("search", this.state.searchWord);
+      if(!searchError){
+          await this.getCoffeeResults();
+      } else{
+          this.setState({searchError, searchResults:null});
+      }
+      this.setState({searched:true});
+  }
+
+    async getAllCoffee(){
+        try{
+            const response = await fetch(`http://192.168.1.110:5000/api/coffee/`, {
+                method:"GET",
+                accept:"application/json"
+            });
+            const responseJson = await response.json();
+            if(response.ok){
+                const allCoffees = responseJson.map(index => ({
+                    coffeeId:index._id,
+                    coffeeName:index.Name,
+                    imagePath:index.ImagePath
+                }));
+                this.setState({allCoffees});
+            }
+            if(!response.ok){
+                this.setState({searchResults:null});
+            }
+        }catch (e) {
+            console.log("Error searching ", e);
+        }
+    }
+  async getCoffeeResults(){
+      try{
+          const searchString = this.state.searchWord;
+          console.log(searchString);
+          const response = await fetch(`http://192.168.1.110:5000/api/coffee/?q={searchString}`, {
+              method:"GET",
+              accept:"application/json"
+          });
+          const responseJson = await response.json();
+          console.log(responseJson);
+          if(response.ok){
+              const searchResults = responseJson.map(index => ({
+                  coffeeId:index._id,
+                      coffeeName:index.Name,
+                  imagePath:index.ImagePath
+              }));
+              this.setState({searchResults});
+          }
+          if(!response.ok){
+              this.setState({searchResults:null});
+          }
+      }catch (e) {
+          console.log("Error searching ", e);
+      }
+  }
+
+
   render() {
-    const CoffeeItem = ({ coffeeId, coffeeName }) => {
+    const CoffeeItem = ({ coffeeId, coffeeName, imagePath }) => {
       let favorite;
       if (this.state.favoritesId.includes(coffeeId)) {
         favorite = true;
@@ -94,8 +157,8 @@ export default class Search extends Component {
           >
             <View style={{ flexDirection: "row" }}>
               <Image
-                source={require("../../assets/icon-coffee.png")}
-                style={{ width: 70, height: 70 }}
+                  source={{uri:imagePath}}
+                style={{width:70, height:70}}
               />
               <Text
                 style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}
@@ -142,47 +205,56 @@ export default class Search extends Component {
         </View>
       );
     };
-    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View style={styles.text}>
-            <Text style={Typography.FONT_H2_ORANGE}> Browse Coffees </Text>
-          </View>
-          <View style={styles.searchBar}>
-            <TouchableOpacity value={this.state.searchWord}>
-              <Icon name="search" size={32} color={Colors.ORANGE_LIGHT} />
-            </TouchableOpacity>
-            <TextInput
-              style={[Typography.FONT_H4_GREY, styles.textInput]}
-              placeholder="Search..."
-              placeholderTextColor={Colors.GREY}
-              returnKeyType="search"
-              autoFocus={false}
-            />
-            <TouchableOpacity value={this.state.searchWord}>
-              <Icon name="tune" size={32} color={Colors.ORANGE_LIGHT} />
-            </TouchableOpacity>
-          </View>
-          <View style={{ flex: 8 }}>
-            <SafeAreaView style={styles.containerResults}>
-              <FlatList
-                data={this.state.allCoffees}
-                extraData={this.state}
-                renderItem={({ item }) => (
-                  <TouchableOpacity>
-                    <CoffeeItem
-                      coffeeId={item.coffeeId}
-                      coffeeName={item.coffeeName}
-                    />
-                  </TouchableOpacity>
-                )}
-                keyExtractor={item => item.coffeeId}
-              />
-            </SafeAreaView>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    );
+      let data;
+      return (
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.container}>
+                  <View style={styles.text}>
+                      <Text style={Typography.FONT_H2_ORANGE}> Browse Coffees </Text>
+                  </View>
+                  <View style={styles.searchBar}>
+                      <TouchableOpacity value={this.state.searchWord} onPress={this.validateSearch}>
+                          <Icon name="search" size={32} color={Colors.ORANGE_LIGHT}/>
+                      </TouchableOpacity>
+                      <TextInput
+                          style={[Typography.FONT_H4_GREY, styles.textInput]}
+                          placeholder="Search..."
+                          placeholderTextColor={Colors.GREY}
+                          onChangeText={this.updateSearchText}
+                          value={this.state.searchWord}
+                          returnKeyType="search"
+                          autoFocus={false}
+                          onSubmitEditing={this.validateSearch}
+                          onBlur={() => {
+                              this.setState({searchError: Validate("search", this.state.searchWord)});
+                          }}
+                          error={this.state.searchError}
+                      />
+                      <TouchableOpacity>
+                          <Icon name="tune" size={32} color={Colors.ORANGE_LIGHT}/>
+                      </TouchableOpacity>
+                  </View>
+                  <View style={{flex: 8}}>
+                      <SafeAreaView style={styles.containerResults}>
+                          <FlatList
+                                data={this.state.searchResults && this.state.searched ? this.state.searchResults : this.state.allCoffees}
+                              extraData={this.state}
+                              renderItem={({item}) => (
+                                  <TouchableOpacity>
+                                      <CoffeeItem
+                                          coffeeId={item.coffeeId}
+                                          coffeeName={item.coffeeName}
+                                          imagePath={item.imagePath}
+                                      />
+                                  </TouchableOpacity>
+                              )}
+                              keyExtractor={item => item.coffeeId}
+                          />
+                      </SafeAreaView>
+                  </View>
+              </View>
+          </TouchableWithoutFeedback>
+      );
   }
 }
 const styles = StyleSheet.create({
@@ -228,5 +300,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 1,
     elevation: 1
-  }
+  },
+        stretch: {
+            width: 50,
+            height: 200,
+            resizeMode: 'stretch'
+        }
 });
