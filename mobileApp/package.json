@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "^35.0.0",
+    "prettier": "^1.19.1",
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
@@ -21,7 +22,6 @@
   "devDependencies": {
     "babel-preset-expo": "^7.1.0",
     "expo-font": "^7.0.0",
-    "prettier": "1.19.1",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation-stack": "^1.10.3",
     "react-navigation-tabs": "^2.6.0"
