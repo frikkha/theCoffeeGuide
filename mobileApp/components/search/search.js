@@ -9,7 +9,6 @@ import {
     FlatList,
     Keyboard,
     Dimensions,
-    Alert,
     TextInput,
     SafeAreaView,
     Modal
@@ -158,7 +157,7 @@ export default class Search extends Component {
             const searchString = this.state.searchWord;
             console.log(searchString);
             const response = await fetch(
-                `http://192.168.1.110:5000/api/coffee/?q={searchString}`,
+                `http://192.168.1.110:5000/api/coffee/q=name&name=${searchString}`,
                 {
                     method: "GET",
                     accept: "application/json"
@@ -170,7 +169,9 @@ export default class Search extends Component {
                 const searchResults = responseJson.map(index => ({
                     coffeeId: index._id,
                     coffeeName: index.Name,
-                    imagePath: index.ImagePath
+                    imagePath: index.ImagePath,
+                    content:index.Content,
+                    hits:index.Hits,
                 }));
                 this.setState({ searchResults });
             }
@@ -184,7 +185,7 @@ export default class Search extends Component {
 
     render() {
         const screenWidth = Math.round(Dimensions.get("window").width);
-        const CoffeeItem = ({ coffeeId, coffeeName, imagePath }) => {
+        const CoffeeItem = ({ coffeeId, coffeeName, imagePath, content }) => {
             let favorite;
             if (this.state.favoritesId.includes(coffeeId)) {
                 favorite = true;
@@ -378,6 +379,7 @@ export default class Search extends Component {
                                             coffeeId={item.coffeeId}
                                             coffeeName={item.coffeeName}
                                             imagePath={item.imagePath}
+                                            content={item.content}
                                         />
                                     </TouchableOpacity>
                                 )}
