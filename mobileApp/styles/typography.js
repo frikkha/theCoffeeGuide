@@ -4,6 +4,7 @@ import * as Colors from "./colors";
 const FONT_FAMILY_TEXT = "roboto";
 // should actually be quando but cannot import it:(
 const FONT_FAMILY_HEADINGS = "quando";
+const FONT_FAMILY_TEXT_BOLD ="robotoBold";
 
 // FONT WEIGHT
 const FONT_WEIGHT_LIGHT = "300";
@@ -62,9 +63,13 @@ export const FONT_H4_BROWN_DARK = {
   color: Colors.BROWN_DARK
 };
 
+export const FONT_MED_BROWN_DARK_BOLD = {
+  fontFamily: FONT_FAMILY_TEXT_BOLD,
+  fontSize: FONT_SIZE_16,
+  color: Colors.BROWN_DARK
+};
 export const FONT_MED_BROWN_DARK = {
   fontFamily: FONT_FAMILY_TEXT,
-  fontWeight: FONT_WEIGHT_BOLD,
   fontSize: FONT_SIZE_16,
   color: Colors.BROWN_DARK
 };

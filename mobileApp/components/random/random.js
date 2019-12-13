@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: Colors.BEIGE,
     alignSelf: "center",
     marginTop: 9,
-    fontFamily: "roboto",
+    fontFamily: "robotoBold",
     fontSize: 14
   },
 randomCoffee:{

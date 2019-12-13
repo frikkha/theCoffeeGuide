@@ -37,9 +37,14 @@ export default class Search extends Component {
     }
 
     componentDidMount = async () => {
-        this.getFavorites();
-        this.getAllCoffee();
+        this.focusListener = this.props.navigation.addListener("didFocus", () =>{
+            this.getFavorites();
+            this.getAllCoffee();
+        });
     };
+    componentWillUnmount() {
+        this.focusListener.remove();
+    }
 
     setModalVisible() {
         this.setState({ modalVisible: !this.state.modalVisible });
@@ -202,10 +207,10 @@ export default class Search extends Component {
                         <View style={{ flexDirection: "row" }}>
                             <Image
                                 source={{ uri: imagePath }}
-                                style={{ width: 70, height: 70 }}
+                                style={{ width: 70, height: 70, marginLeft:10 }}
                             />
                             <Text
-                                style={[Typography.FONT_MED_BROWN_DARK, { marginLeft: 10 }]}
+                                style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
                             >
                                 {coffeeName}
                             </Text>
@@ -254,7 +259,7 @@ export default class Search extends Component {
                 <View style={styles.container}>
                     <View style = {{flexDirection:"row", alignItems:"space-between"}}>
                     <View style={styles.text}>
-                        <Text style={Typography.FONT_H2_ORANGE}> Browse Coffees </Text>
+                        <Text style={Typography.FONT_H2_ORANGE}> Your guide to making the perfect cup of coffee. </Text>
                     </View>
                     {this.state.searchResults !== null && this.state.searched ? (
                         <TouchableOpacity
@@ -349,7 +354,7 @@ export default class Search extends Component {
                         </TouchableOpacity>
                         <TextInput
                             style={[Typography.FONT_H4_GREY, styles.textInput]}
-                            placeholder="Search..."
+                            placeholder="Find recipes"
                             placeholderTextColor={Colors.GREY}
                             onChangeText={this.updateSearchText}
                             value={this.state.searchWord}

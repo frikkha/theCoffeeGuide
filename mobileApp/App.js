@@ -90,6 +90,7 @@ export default class App extends Component {
   async componentDidMount() {
     await Font.loadAsync({
       roboto: require("./assets/fonts/roboto-regular.ttf"),
+      robotoBold:require("./assets/fonts/roboto/Roboto-Bold.ttf"),
       quando: require("./assets/fonts/quando-regular.ttf")
     });
     this.setState({ fontLoaded: true });
