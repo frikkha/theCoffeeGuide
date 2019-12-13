@@ -49,6 +49,18 @@ export const FONT_H4_GREY = {
   fontSize: FONT_SIZE_18,
   color: Colors.GREY
 };
+export const FONT_H4_BROWN_LIGHT = {
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_18,
+  color: Colors.BROWN_LIGHT
+};
+export const FONT_H4_BROWN_DARK = {
+  fontFamily: FONT_FAMILY_HEADINGS,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE_18,
+  color: Colors.BROWN_DARK
+};
 
 export const FONT_MED_BROWN_DARK = {
   fontFamily: FONT_FAMILY_TEXT,
