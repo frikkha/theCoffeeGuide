@@ -148,8 +148,8 @@ export default class Search extends Component {
                   >
                     <Icon
                         name={favorite ? "favorite" : "favorite-border"}
-                        size={35}
-                        color={Colors.BROWN_RED}
+                        size={30}
+                        color={Colors.BROWN_LIGHT}
                     />
                   </TouchableOpacity>
                 </View>
@@ -163,7 +163,7 @@ export default class Search extends Component {
                   }}
               >
                 <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
-                <Icon name="arrow-drop-down" size={35} color={Colors.BROWN_RED} />
+                <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT} />
               </View>
             </View>
 

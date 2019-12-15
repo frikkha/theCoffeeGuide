@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {
   Text,
   StyleSheet,
+    SafeAreaView,
   ScrollView,
   View,
   Image,
@@ -58,51 +59,52 @@ export default class Random extends Component {
     const screenWidth = Math.round(Dimensions.get("window").width);
     const screenHeight = Math.round(Dimensions.get("window").height);
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flex: 2}}>
-          <View style={{alignItems:"center", width:screenWidth, height: 250}}><Image style={{width:375, height:250}} source={require("../../assets/coffee.jpg")}/></View>
-          <Text style={[styles.heading, Typography.FONT_H2_ORANGE, {alignSelf:"center"}]}>
-            Coffee suggestions{" "}
-          </Text>
-        </View>
-        <View style={{ flex: 2 }}>
+        <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={{ flex: 3}}>
+          <View style={{alignItems:"center", width:screenWidth, height: 180}}><Image style={{width:375, height:180}} source={require("../../assets/coffee.jpg")}/></View>
           <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={this.random}
-            style={styles.randomButton}
+              activeOpacity={0.8}
+              onPress={this.random}
+              style={styles.randomButton}
           >
             <Text style={styles.buttonText}> Get a coffee suggestion </Text>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 3 }}>
+
+        <View style={styles.randomView}>
           {this.state.randomCoffee === null ? null : (
             <View style={styles.randomCoffee}>
               <Image source={{uri:this.state.randomCoffee.imagePath}} style={{width:100, height:100, alignSelf:"center"}}/>
               <Text style={[Typography.FONT_H4_BROWN_LIGHT, {marginTop:8}]}>
                 {this.state.randomCoffee.coffeeName}
               </Text>
-              {this.state.randomCoffee.content.map (index => ( <Text key={index.toString()} style={[Typography.FONT_MED_BROWN_DARK]}>{index}</Text>))}
+              <View style={styles.line} />
+              {this.state.randomCoffee.content.map (index => (
+                  <Text key={index.toString()} style={[Typography.FONT_MED_BROWN_DARK]}>{index}</Text>))}
             </View>
           )}
         </View>
       </ScrollView>
+        </SafeAreaView>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.BEIGE
+    flex: 1,
+    backgroundColor: Colors.BEIGE,
   },
-  heading: {
-    marginTop: 20,
-    alignItems: "center"
+  scrollView:{
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex:1,
   },
   randomButton: {
     width: 203,
     height: 38,
+    marginTop:10,
+    marginBottom:15,
     borderRadius: 20,
     backgroundColor: Colors.BROWN_LIGHT,
     alignSelf: "center"
@@ -117,6 +119,13 @@ const styles = StyleSheet.create({
 randomCoffee:{
   width: 300,
   height:150,
-  justifyContent: "center"
 },
+  randomView:{
+    flex:6
+  },
+  line: {
+    marginVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.BROWN_LIGHT
+  }
 });
