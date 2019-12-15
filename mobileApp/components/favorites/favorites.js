@@ -218,26 +218,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.BEIGE
   },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10
-  },
   text: {
     flex: 1,
     marginTop: 80,
     alignItems: "center"
-  },
-  textInput: {
-    height: 42,
-    width: 260,
-    borderBottomColor: Colors.ORANGE_LIGHT,
-    borderBottomWidth: 1.5,
-    marginLeft: 7
   },
   containerResults: {
     backgroundColor: Colors.BEIGE,

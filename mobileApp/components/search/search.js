@@ -26,9 +26,11 @@ export default class Search extends Component {
             searchWord: "",
             searchError: "",
             searchResults: null,
+            searchResultsCopy:null,
             searched: false,
             favoritesId: [],
             allCoffees: null,
+            allCoffeesCopy:null,
             modalVisible: false,
             filters: ["Milk", "Alcohol", "Cream", "Chocolate"],
             selectedFilter: ""
@@ -58,22 +60,43 @@ export default class Search extends Component {
         }
     }
 
-    chocolateFilter() {}
-    alcoholFilter() {}
-    milkFilter() {}
-    creamFilter() {}
+    filter(ingredient) {
+        let filtered = [];
+        if (this.state.searched) {
+            this.state.searchResultsCopy.map(index => {
+                console.log(index);
+                index.content.map(index2 => {
+                    console.log(index2);
+                    if (index2.includes(ingredient)) {
+                        filtered.push(index)
+                    }
+                });
+            });
+            this.setState({searchResults: filtered})
+        }
+        else{ this.state.allCoffeesCopy.map(index => {
+            console.log(index);
+            index.content.map(index2 => {
+                console.log(index2);
+                if (index2.includes(ingredient)) {
+                    filtered.push(index)
+                }
+            });
+        });
+            this.setState({allCoffees: filtered})}
 
+    }
     applyFilter() {
         this.setModalVisible();
         console.log("FILTER: ", this.state.selectedFilter);
         if (this.state.selectedFilter === "Chocolate") {
-            this.chocolateFilter();
+            this.filter("chocolate");
         } else if (this.state.selectedFilter === "Alcohol") {
-            this.alcoholFilter();
+            this.filter("alcohol");
         } else if (this.state.selectedFilter === "Milk") {
-            this.milkFilter();
+            this.filter("milk");
         } else {
-            this.creamFilter();
+            this.filter("cream");
         }
     }
     async storeFavorites(coffeeItem) {
@@ -130,7 +153,7 @@ export default class Search extends Component {
         if (!searchError) {
             await this.getCoffeeResults();
         } else {
-            this.setState({ searchError, searchResults: null });
+            this.setState({ searchError, searchResults: null, searchResultsCopy:null });
         }
         this.setState({ searched: true });
     }
@@ -146,12 +169,13 @@ export default class Search extends Component {
                 const allCoffees = responseJson.map(index => ({
                     coffeeId: index._id,
                     coffeeName: index.Name,
-                    imagePath: index.ImagePath
+                    imagePath: index.ImagePath,
+                    content:index.Content
                 }));
-                this.setState({ allCoffees });
+                this.setState({ allCoffees, allCoffeesCopy:allCoffees });
             }
             if (!response.ok) {
-                this.setState({ searchResults: null });
+                this.setState({ searchResults: null, searchResultsCopy:null});
             }
         } catch (e) {
             console.log("Error searching ", e);
@@ -169,7 +193,6 @@ export default class Search extends Component {
                 }
             );
             const responseJson = await response.json();
-            console.log(responseJson);
             if (response.ok) {
                 const searchResults = responseJson.map(index => ({
                     coffeeId: index._id,
@@ -178,10 +201,10 @@ export default class Search extends Component {
                     content:index.Content,
                     hits:index.Hits,
                 }));
-                this.setState({ searchResults });
+                this.setState({ searchResults, searchResultsCopy:searchResults });
             }
             if (!response.ok) {
-                this.setState({ searchResults: null });
+                this.setState({ searchResults: null, searchResultsCopy:null });
             }
         } catch (e) {
             console.log("Error searching ", e);
@@ -261,14 +284,12 @@ export default class Search extends Component {
                     <View style={styles.text}>
                         <Text style={Typography.FONT_H2_ORANGE}> Your guide to making the perfect cup of coffee. </Text>
                     </View>
-                    {this.state.searchResults !== null && this.state.searched ? (
                         <TouchableOpacity
                             style={styles.filterButton}
                             onPress={() => this.setModalVisible()}
                         >
                             <Icon name="filter-list" size={30} color={Colors.ORANGE_LIGHT} />
                         </TouchableOpacity>
-                    ) : null}
 
                     <Modal
                         visible={this.state.modalVisible}
@@ -284,7 +305,7 @@ export default class Search extends Component {
                             <Icon name={"chevron-left"} size={40} />
                         </TouchableOpacity>
                         <Text style={[Typography.FONT_H2_BROWN, { alignSelf: "center" }]}>
-                            Sort By
+                            Show only results containing:
                         </Text>
                         <FlatList
                             data={this.state.filters}
@@ -416,6 +437,8 @@ const styles = StyleSheet.create({
     text: {
         flex: 1,
         marginTop: 80,
+        marginRight: 20,
+        marginLeft:10,
         alignItems: "center"
     },
     textInput: {
