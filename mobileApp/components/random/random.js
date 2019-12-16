@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import {
   Text,
   StyleSheet,
+    SafeAreaView,
   ScrollView,
   View,
-  TouchableOpacity
+  Image,
+  TouchableOpacity, Dimensions
 } from "react-native";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
@@ -13,75 +15,117 @@ export default class Random extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coffees: ["Espresso", "Americano", "Cappuccino", "Macchiato", "Latte"],
-      randomNumber: null
+      allCoffeeIDs: null,
+      randomCoffee:null,
     };
     this.random = this.random.bind(this);
   }
   async random() {
-    this.setState({ randomNumber: 2 });
+    let randomIndex = Math.floor(Math.random() * this.state.allCoffeeIDs.length);
+    console.log(randomIndex, this.state.allCoffeeIDs.length);
+    await this.setState({randomCoffee: this.state.allCoffeeIDs[randomIndex]});
+    console.log(this.state.randomCoffee.content)
+  }
+
+  componentDidMount = async () => {
+    this.getAllCoffee();
+  };
+
+  async getAllCoffee() {
+    try {
+      const response = await fetch(`http://192.168.1.110:5000/api/coffee/`, {
+        method: "GET",
+        accept: "application/json"
+      });
+      const responseJson = await response.json();
+      if (response.ok) {
+        const allCoffeeIDs = responseJson.map(index => ({
+          coffeeID:index._id,
+          coffeeName: index.Name,
+          imagePath: index.ImagePath,
+          content:index.Content,
+          hits:index.Hits,
+        }));
+        this.setState({ allCoffeeIDs });
+      }
+      if (!response.ok) {
+        this.setState({ allCoffeeIDs: null });
+      }
+    } catch (e) {
+      console.log("Error getting all coffees ", e);
+    }
   }
   render() {
+    const screenWidth = Math.round(Dimensions.get("window").width);
+    const screenHeight = Math.round(Dimensions.get("window").height);
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flex: 2}}>
-          <Text style={[styles.heading, Typography.FONT_H2_ORANGE]}>
-            Coffee suggestions{" "}
-          </Text>
-        </View>
-        <View style={{ flex: 2 }}>
+        <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={{ flex: 3}}>
+          <View style={{alignItems:"center", width:screenWidth, height: 180}}><Image style={{width:375, height:180}} source={require("../../assets/coffee.jpg")}/></View>
           <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={this.random}
-            style={styles.randomButton}
+              activeOpacity={0.8}
+              onPress={this.random}
+              style={styles.randomButton}
           >
             <Text style={styles.buttonText}> Get a coffee suggestion </Text>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 2 }}>
-          {this.state.randomNumber === null ? null : (
-            <View>
-              <Text style={styles.randomResult}>
-                {this.state.coffees[this.state.randomNumber]}
+
+        <View style={styles.randomView}>
+          {this.state.randomCoffee === null ? null : (
+            <View style={styles.randomCoffee}>
+              <Image source={{uri:this.state.randomCoffee.imagePath}} style={{width:100, height:100, alignSelf:"center"}}/>
+              <Text style={[Typography.FONT_H4_BROWN_LIGHT, {marginTop:8}]}>
+                {this.state.randomCoffee.coffeeName}
               </Text>
+              <View style={styles.line} />
+              {this.state.randomCoffee.content.map (index => (
+                  <Text key={index.toString()} style={[Typography.FONT_MED_BROWN_DARK]}>{index}</Text>))}
             </View>
           )}
         </View>
       </ScrollView>
+        </SafeAreaView>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.BEIGE
+    flex: 1,
+    backgroundColor: Colors.BEIGE,
   },
-  heading: {
-    marginTop: 80,
-    alignItems: "center"
+  scrollView:{
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex:1,
   },
   randomButton: {
     width: 203,
     height: 38,
+    marginTop:10,
+    marginBottom:15,
     borderRadius: 20,
-    backgroundColor: Colors.ORANGE_LIGHT,
-    marginTop: 6,
+    backgroundColor: Colors.BROWN_LIGHT,
     alignSelf: "center"
   },
   buttonText: {
-    color: Colors.BROWN_DARK,
+    color: Colors.BEIGE,
     alignSelf: "center",
     marginTop: 9,
-    fontFamily: "roboto",
+    fontFamily: "robotoBold",
     fontSize: 14
   },
-  randomResult: {
-    color: Colors.BROWN_DARK,
-    alignSelf: "center",
-    marginTop: 9,
-    fontFamily: "roboto",
-    fontSize: 14
+randomCoffee:{
+  width: 300,
+  height:150,
+},
+  randomView:{
+    flex:6
+  },
+  line: {
+    marginVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.BROWN_LIGHT
   }
 });

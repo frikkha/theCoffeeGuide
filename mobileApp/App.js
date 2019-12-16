@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
 import SearchPage from "./components/search/search";
 import LoadingPage from "./components/loading/loading";
 import FavoritesPage from "./components/favorites/favorites";
 import RandomPage from "./components/random/random";
+import MapPage from "./components/mapPage";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as Font from "expo-font";
-import { Asset } from "expo-asset";
 import * as Colors from "./styles/colors";
+import {StyleSheet} from "react-native";
 
 const SearchStack = createStackNavigator(
   { Search: SearchPage, Loading: LoadingPage, Favorites: FavoritesPage },
@@ -41,6 +41,16 @@ const RandomStack = createStackNavigator(
     headerMode: "none"
   }
 );
+const MapStack = createStackNavigator(
+    {
+      Random: MapPage
+    },
+    {
+      initialRouteName: "Random",
+      header: null,
+      headerMode: "none"
+    }
+);
 
 const bottomTabNavigator = createBottomTabNavigator(
   {
@@ -67,8 +77,15 @@ const bottomTabNavigator = createBottomTabNavigator(
           <Icon name="cached" size={32} color={tintColor} />
         )
       }
-    }
-  },
+    },
+    Map: {
+    screen: MapStack,
+        navigationOptions: {
+      tabBarIcon: ({ tintColor }) => (
+          <Icon name="near-me" size={32} color={tintColor} />
+      )
+    }}
+},
   {
     initialRouteName: "Search",
     tabBarOptions: {
@@ -90,6 +107,7 @@ export default class App extends Component {
   async componentDidMount() {
     await Font.loadAsync({
       roboto: require("./assets/fonts/roboto-regular.ttf"),
+      robotoBold:require("./assets/fonts/roboto/Roboto-Bold.ttf"),
       quando: require("./assets/fonts/quando-regular.ttf")
     });
     this.setState({ fontLoaded: true });
