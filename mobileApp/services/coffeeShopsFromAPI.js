@@ -13,7 +13,7 @@ const getCoffeeShops = userLocation => {
     return api
         .get('/businesses/search', {
             params: {
-                limit: 10,
+                limit: 20,
                 categories: 'coffee,coffeeroasteries,coffeeshops',
                 ...userLocation,
             },
