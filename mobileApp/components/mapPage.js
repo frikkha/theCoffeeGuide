@@ -1,7 +1,5 @@
 import React from "react";
-import { Text, SafeAreaView, StyleSheet } from "react-native";
-import * as Location from "expo-location";
-import * as Permissions from "expo-permissions";
+import {View, StyleSheet} from "react-native";
 import Map from "./map";
 import CoffeeShopsFromAPI from "../services/coffeeShopsFromAPI";
 
@@ -34,7 +32,6 @@ export default class MapPage extends React.Component {
         console.log("userlocation: ", userLocation);
         const coffeeShops = await CoffeeShopsFromAPI.getCoffeeShops(userLocation);
         this.setState({coffeeShops});
-        console.log(coffeeShops);
     };
     findCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
@@ -55,37 +52,19 @@ export default class MapPage extends React.Component {
         );
     };
 
-    getLocationAsync = async () => {
-        const {status} = await Permissions.askAsync(Permissions.LOCATION).catch(error);
-        if(status !== "granted"){
-            this.setState({errorMessage:"Permission to access location was denied"});
-        }
-        let location = await Location.getCurrentPositionAsync({}).catch(error);
-        const region={
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            ...deltas
-        };
-
-        await this.setState({region});
-        console.log(region);
-        //await this.getCoffeeShops();
-    };
-
     render() {
         const {region, coffeeShops} = this.state;
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <Map region={region} places={coffeeShops}/>
-            </SafeAreaView>
+            </View>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-alignItems: "center",
-justifyContent: "center",
+        alignItems: "center",
+        justifyContent: "center"
 }
 });

@@ -10,7 +10,6 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as Font from "expo-font";
 import * as Colors from "./styles/colors";
-import {StyleSheet} from "react-native";
 
 const SearchStack = createStackNavigator(
   { Search: SearchPage, Loading: LoadingPage, Favorites: FavoritesPage },
@@ -43,10 +42,10 @@ const RandomStack = createStackNavigator(
 );
 const MapStack = createStackNavigator(
     {
-      Random: MapPage
+      Map: MapPage
     },
     {
-      initialRouteName: "Random",
+      initialRouteName: "Map",
       header: null,
       headerMode: "none"
     }
@@ -78,7 +77,7 @@ const bottomTabNavigator = createBottomTabNavigator(
         )
       }
     },
-    Map: {
+    Nearby: {
     screen: MapStack,
         navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
@@ -91,8 +90,8 @@ const bottomTabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       activeTintColor: Colors.BROWN_RED,
       inactiveTintColor: Colors.BROWN_LIGHT,
-      activeBackgroundColor: Colors.BEIGE,
-      inactiveBackgroundColor: Colors.BEIGE,
+      activeBackgroundColor: Colors.WHITE,
+      inactiveBackgroundColor: Colors.WHITE,
       height: 85
     }
   }
@@ -122,12 +121,3 @@ export default class App extends Component {
     }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});

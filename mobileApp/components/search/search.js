@@ -160,7 +160,7 @@ export default class Search extends Component {
 
     async getAllCoffee() {
         try {
-            const response = await fetch(`http://192.168.1.110:5000/api/coffee/`, {
+            const response = await fetch(`http://192.168.0.31:5000/api/coffee/`, {
                 method: "GET",
                 accept: "application/json"
             });
@@ -186,7 +186,7 @@ export default class Search extends Component {
             const searchString = this.state.searchWord;
             console.log(searchString);
             const response = await fetch(
-                `http://192.168.1.110:5000/api/coffee/q=name&name=${searchString}`,
+                `http://192.168.0.31:5000/api/coffee/q=name&name=${searchString}`,
                 {
                     method: "GET",
                     accept: "application/json"
