@@ -138,8 +138,8 @@ export default class Search extends Component {
                     <View
                         style={{
                           flexDirection: "row",
-                          justifyContent: "flex-end",
-                          marginRight: 15
+                          alignItems: "flex-start",
+                          marginRight: 15,
                         }}
                     >
                       <TouchableOpacity
@@ -216,7 +216,9 @@ export default class Search extends Component {
                       justifyContent: "space-between",
                       alignSelf: "flex-start"
                     }}>
-                      <Text>{content.map( i => { return '• ' + i + '\n'})}</Text>
+                      <Text style={[Typography.FONT_MED_BROWN_DARK]}>
+                        {content.map( i => { return '• ' + i + '\n'})}
+                      </Text>
                     </View>
                   </View>
               }
