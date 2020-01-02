@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   FlatList,
   Keyboard,
-  Dimensions,
   SafeAreaView,
 } from "react-native";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
+import * as Api from "../../services/apiUrls";
 import { TouchableWithoutFeedback } from "react-native-web";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
@@ -20,7 +20,7 @@ export default class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      favoritesId: [],
+      favoritesId: null,
       allCoffees: null,
     };
   }
@@ -81,12 +81,12 @@ export default class Search extends Component {
   }
   async getAllCoffee() {
     try {
-      const response = await fetch(`http://192.168.1.110:5000/api/coffee/`, {
+      const response = await fetch(Api.GET_ALL_COFFEES, {
         method: "GET",
         accept: "application/json"
       });
-      const responseJson = await response.json();
       if (response.ok) {
+        const responseJson = await response.json();
         const allCoffees = responseJson.map(index => ({
           coffeeId: index._id,
           coffeeName: index.Name,
@@ -104,7 +104,6 @@ export default class Search extends Component {
 
 
   render() {
-    const screenWidth = Math.round(Dimensions.get("window").width);
     const CoffeeItem = ({ coffeeId, coffeeName, imagePath, content }) => {
       let favorite;
       if (this.state.favoritesId.includes(coffeeId)) {
@@ -178,32 +177,33 @@ export default class Search extends Component {
           <View style={styles.container}>
             <View style = {{flexDirection:"row", alignItems:"space-between"}}>
               <View style={styles.text}>
-                <Text style={Typography.FONT_H2_ORANGE}> Your favorite coffee recipes </Text>
+                <Text style={Typography.FONT_H2_ORANGE}> Your favorite coffees </Text>
               </View>
 
 
             </View>
             <View style={{ flex: 8 }}>
               <SafeAreaView style={styles.containerResults}>
+              {this.state.favoritesId !== null  ? (
                 <FlatList
-                    data={
-                      this.state.searchResults && this.state.searched
-                          ? this.state.searchResults
-                          : this.state.allCoffees
-                    }
-                    extraData={this.state}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity>
-                          <CoffeeItem
-                              coffeeId={item.coffeeId}
-                              coffeeName={item.coffeeName}
-                              imagePath={item.imagePath}
-                              content={item.content}
-                          />
-                        </TouchableOpacity>
-                    )}
-                    keyExtractor={item => item.coffeeId}
+                data={this.state.allCoffees}
+                extraData={this.state}
+                renderItem={({ item }) => (
+                <TouchableOpacity>
+                <CoffeeItem
+                coffeeId={item.coffeeId}
+                coffeeName={item.coffeeName}
+                imagePath={item.imagePath}
+                content={item.content}
                 />
+                </TouchableOpacity>
+                )}
+                keyExtractor={item => item.coffeeId}
+                />
+                ) :(
+                    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+                <Text style={Typography.FONT_MED_BROWN_DARK}>You don't have any favorites</Text></View>)
+         }
               </SafeAreaView>
             </View>
           </View>
@@ -238,12 +238,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 1,
     elevation: 1
-  },
-  stretch: {
-    width: 50,
-    height: 200,
-    resizeMode: "stretch"
-  },
-
+  }
 });
 

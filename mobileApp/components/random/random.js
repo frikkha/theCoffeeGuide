@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   Text,
   StyleSheet,
-    SafeAreaView,
   ScrollView,
   View,
   Image,
@@ -10,6 +9,7 @@ import {
 } from "react-native";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
+import * as Api from "../../services/apiUrls";
 
 export default class Random extends Component {
   constructor(props) {
@@ -21,24 +21,24 @@ export default class Random extends Component {
     this.random = this.random.bind(this);
   }
   async random() {
-    let randomIndex = Math.floor(Math.random() * this.state.allCoffeeIDs.length);
-    console.log(randomIndex, this.state.allCoffeeIDs.length);
-    await this.setState({randomCoffee: this.state.allCoffeeIDs[randomIndex]});
-    console.log(this.state.randomCoffee.content)
+    if(this.state.allCoffeeIDs != null){
+      let randomIndex = Math.floor(Math.random() * this.state.allCoffeeIDs.length);
+      await this.setState({randomCoffee: this.state.allCoffeeIDs[randomIndex]});
+    }
   }
 
   componentDidMount = async () => {
-    this.getAllCoffee();
+    await this.getAllCoffee();
   };
 
   async getAllCoffee() {
     try {
-      const response = await fetch(`http://192.168.1.110:5000/api/coffee/`, {
+      const response = await fetch(Api.GET_ALL_COFFEES, {
         method: "GET",
         accept: "application/json"
       });
-      const responseJson = await response.json();
       if (response.ok) {
+        const responseJson = await response.json();
         const allCoffeeIDs = responseJson.map(index => ({
           coffeeID:index._id,
           coffeeName: index.Name,
@@ -59,10 +59,10 @@ export default class Random extends Component {
     const screenWidth = Math.round(Dimensions.get("window").width);
     const screenHeight = Math.round(Dimensions.get("window").height);
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={{ flex: 3}}>
-          <View style={{alignItems:"center", width:screenWidth, height: 180}}><Image style={{width:375, height:180}} source={require("../../assets/coffee.jpg")}/></View>
+          <View style={{alignItems:"center", width:screenWidth, height: 180}}><Image style={{width:375, height:180}} source={require("../../assets/coffee.png")}/></View>
           <TouchableOpacity
               activeOpacity={0.8}
               onPress={this.random}
@@ -86,7 +86,7 @@ export default class Random extends Component {
           )}
         </View>
       </ScrollView>
-        </SafeAreaView>
+        </View>
     );
   }
 }
