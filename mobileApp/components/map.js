@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, StyleSheet, Text} from "react-native";
+import {StyleSheet} from "react-native";
 import MapView from "react-native-maps"
 
 
@@ -16,7 +16,7 @@ export default class Map extends Component{
                      showsUserLocation={true}
                      showsCompass={true}
                      showsPointsOfInterest = {false}
-            showsMyLocationButton>
+                     showsMyLocationButton>
                 {this.props.places.map((place,i) => (
                     <MapView.Marker key={i} coordinate={place.coords} title={place.name}/>
                 ))}

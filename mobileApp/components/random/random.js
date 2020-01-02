@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
+import * as Api from "../../services/apiUrls";
 
 export default class Random extends Component {
   constructor(props) {
@@ -32,7 +33,7 @@ export default class Random extends Component {
 
   async getAllCoffee() {
     try {
-      const response = await fetch(`http://192.168.0.31:5000/api/coffee/`, {
+      const response = await fetch(Api.GET_ALL_COFFEES, {
         method: "GET",
         accept: "application/json"
       });

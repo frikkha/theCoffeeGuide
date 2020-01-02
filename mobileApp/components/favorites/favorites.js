@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import * as Colors from "../../styles/colors";
 import * as Typography from "../../styles/typography";
+import * as Api from "../../services/apiUrls";
 import { TouchableWithoutFeedback } from "react-native-web";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
@@ -80,7 +81,7 @@ export default class Search extends Component {
   }
   async getAllCoffee() {
     try {
-      const response = await fetch(`http://192.168.0.31:5000/api/coffee/`, {
+      const response = await fetch(Api.GET_ALL_COFFEES, {
         method: "GET",
         accept: "application/json"
       });
