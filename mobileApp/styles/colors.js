@@ -10,4 +10,3 @@ export const BROWN_LIGHT = '#8F7D73';
 export const BEIGE = '#F4F1EC';
 export const BEIGE_LIGHT = '#FEF9F9';
 export const GREY = '#C4C4C4';
-

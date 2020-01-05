@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Text,
   AsyncStorage,
@@ -9,14 +9,14 @@ import {
   FlatList,
   Keyboard,
   SafeAreaView,
-} from "react-native";
-import * as Colors from "../../styles/colors";
-import * as Typography from "../../styles/typography";
-import * as Api from "../../services/apiUrls";
-import { TouchableWithoutFeedback } from "react-native-web";
-import Icon from "react-native-vector-icons/MaterialIcons";
+} from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-web';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Colors from '../../styles/colors';
+import * as Typography from '../../styles/typography';
+import * as Api from '../../services/apiUrls';
 
-export default class Search extends Component {
+export default class Favorites extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +26,7 @@ export default class Search extends Component {
   }
 
   componentDidMount = async () => {
-    this.focusListener = this.props.navigation.addListener("didFocus", () =>{
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.getFavorites();
       this.getAllCoffee();
     });
@@ -36,196 +36,199 @@ export default class Search extends Component {
     this.focusListener.remove();
   }
 
-  async storeFavorites(coffeeItem) {
-    try {
-      const favorites = await AsyncStorage.getItem("favorites");
-      if (favorites !== null) {
-        let favoritesParsed = JSON.parse(favorites);
-        favoritesParsed.push(coffeeItem);
-        AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
-        this.setState({ favoritesId: favoritesParsed });
-      } else {
-        const favorites = [coffeeItem];
-        AsyncStorage.setItem("favorites", JSON.stringify(favorites));
-        this.setState({ favoritesId: favorites });
-      }
-    } catch (error) {
-      console.log("Error storing favorites: ", error);
-    }
-  }
 
-  async removeFavorite(coffeeItem) {
-    try {
-      const favorites = await AsyncStorage.getItem("favorites");
-      if (favorites !== null) {
-        let favoritesParsed = JSON.parse(favorites);
-        const indexOfCoffeeItem = favoritesParsed.indexOf(coffeeItem);
-        favoritesParsed.splice(indexOfCoffeeItem, 1);
-        AsyncStorage.setItem("favorites", JSON.stringify(favoritesParsed));
-        this.setState({ favoritesId: favoritesParsed });
-      }
-    } catch (error) {
-      console.log("Error removing favorites: ", error);
-    }
-  }
   async getFavorites() {
     try {
-      const favorites = await AsyncStorage.getItem("favorites");
+      const favorites = await AsyncStorage.getItem('favorites');
       if (favorites !== null) {
         const favoritesParsed = JSON.parse(favorites);
         this.setState({ favoritesId: favoritesParsed });
       }
     } catch (error) {
-      console.log("Error getting favorites: ", error);
+      console.log('Error getting favorites: ', error);
     }
   }
+
   async getAllCoffee() {
     try {
       const response = await fetch(Api.GET_ALL_COFFEES, {
-        method: "GET",
-        accept: "application/json"
+        method: 'GET',
+        accept: 'application/json',
       });
       if (response.ok) {
         const responseJson = await response.json();
-        const allCoffees = responseJson.map(index => ({
+        const allCoffees = responseJson.map((index) => ({
           coffeeId: index._id,
           coffeeName: index.Name,
-          imagePath: index.ImagePath
+          imagePath: index.ImagePath,
         }));
         this.setState({ allCoffees });
       }
       if (!response.ok) {
-        this.setState({ searchResults: null });
+        this.setState({ allCoffees: null });
       }
     } catch (e) {
-      console.log("Error searching ", e);
+      console.log('Error searching ', e);
     }
   }
 
+  async removeFavorite(coffeeItem) {
+    try {
+      const favorites = await AsyncStorage.getItem('favorites');
+      if (favorites !== null) {
+        const favoritesParsed = JSON.parse(favorites);
+        const indexOfCoffeeItem = favoritesParsed.indexOf(coffeeItem);
+        favoritesParsed.splice(indexOfCoffeeItem, 1);
+        AsyncStorage.setItem('favorites', JSON.stringify(favoritesParsed));
+        this.setState({ favoritesId: favoritesParsed });
+      }
+    } catch (error) {
+      console.log('Error removing favorites: ', error);
+    }
+  }
+
+  async storeFavorites(coffeeItem) {
+    try {
+      const favorites = await AsyncStorage.getItem('favorites');
+      if (favorites !== null) {
+        const favoritesParsed = JSON.parse(favorites);
+        favoritesParsed.push(coffeeItem);
+        AsyncStorage.setItem('favorites', JSON.stringify(favoritesParsed));
+        this.setState({ favoritesId: favoritesParsed });
+      } else {
+        const favorites = [coffeeItem];
+        AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+        this.setState({ favoritesId: favorites });
+      }
+    } catch (error) {
+      console.log('Error storing favorites: ', error);
+    }
+  }
 
   render() {
-    const CoffeeItem = ({ coffeeId, coffeeName, imagePath, content }) => {
+    const CoffeeItem = ({
+      coffeeId, coffeeName, imagePath, content,
+    }) => {
       let favorite;
       if (this.state.favoritesId.includes(coffeeId)) {
-        favorite= true;
-        return(
-            <View style={styles.coffeeItem}>
-              <View
-                  style={{
-                    flexDirection: "row",
-                    marginTop: 10,
-                    justifyContent: "space-between"
-                  }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Image
-                      source={{ uri: imagePath }}
-                      style={{ width: 70, height: 70, marginLeft:10 }}
-                  />
-                  <Text
-                      style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
-                  >
-                    {coffeeName}
-                  </Text>
-                </View>
-                <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      marginRight: 15
-                    }}
+        favorite = true;
+        return (
+          <View style={styles.coffeeItem}>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 10,
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ flexDirection: 'row' }}>
+                <Image
+                  source={{ uri: imagePath }}
+                  style={{ width: 70, height: 70, marginLeft: 10 }}
+                />
+                <Text
+                  style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
                 >
-                  <TouchableOpacity
-                      onPress={() => {
-                        {
-                          favorite
-                              ? this.removeFavorite(coffeeId)
-                              : this.storeFavorites(coffeeId);
-                        }
-                        favorite = !favorite;
-                      }}
-                  >
-                    <Icon
-                        name={favorite ? "favorite" : "favorite-border"}
-                        size={30}
-                        color={Colors.BROWN_LIGHT}
-                    />
-                  </TouchableOpacity>
-                </View>
+                  {coffeeName}
+                </Text>
               </View>
               <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    marginBottom: 10
-                  }}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  marginRight: 15,
+                }}
               >
-                <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
-                <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT} />
+                <TouchableOpacity
+                  onPress={() => {
+                    {
+                      favorite
+                        ? this.removeFavorite(coffeeId)
+                        : this.storeFavorites(coffeeId);
+                    }
+                    favorite = !favorite;
+                  }}
+                >
+                  <Icon
+                    name={favorite ? 'favorite' : 'favorite-border'}
+                    size={30}
+                    color={Colors.BROWN_LIGHT}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+            >
+              <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
+              <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT} />
+            </View>
+          </View>
 
         );
       }
-      else{return null}
-
-
+      return null;
     };
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
-            <View style = {{flexDirection:"row", alignItems:"space-between"}}>
-              <View style={styles.text}>
-                <Text style={Typography.FONT_H2_ORANGE}> Your favorite coffees </Text>
-              </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={{ flexDirection: 'row', alignItems: 'space-between' }}>
+            <View style={styles.text}>
+              <Text style={Typography.FONT_H2_ORANGE}> Your favorite coffees </Text>
+            </View>
 
 
-            </View>
-            <View style={{ flex: 8 }}>
-              <SafeAreaView style={styles.containerResults}>
-              {this.state.favoritesId !== null  ? (
-                <FlatList
-                data={this.state.allCoffees}
-                extraData={this.state}
-                renderItem={({ item }) => (
-                <TouchableOpacity>
-                <CoffeeItem
-                coffeeId={item.coffeeId}
-                coffeeName={item.coffeeName}
-                imagePath={item.imagePath}
-                content={item.content}
-                />
-                </TouchableOpacity>
-                )}
-                keyExtractor={item => item.coffeeId}
-                />
-                ) :(
-                    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-                <Text style={Typography.FONT_MED_BROWN_DARK}>You don't have any favorites</Text></View>)
-         }
-              </SafeAreaView>
-            </View>
           </View>
-        </TouchableWithoutFeedback>
+          <View style={{ flex: 8 }}>
+            <SafeAreaView style={styles.containerResults}>
+              {this.state.favoritesId !== null ? (
+                <FlatList
+                  data={this.state.allCoffees}
+                  extraData={this.state}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity>
+                      <CoffeeItem
+                        coffeeId={item.coffeeId}
+                        coffeeName={item.coffeeName}
+                        imagePath={item.imagePath}
+                        content={item.content}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.coffeeId}
+                />
+              ) : (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={Typography.FONT_MED_BROWN_DARK}>You don't have any favorites</Text>
+                </View>
+              )}
+            </SafeAreaView>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.BEIGE
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.BEIGE,
   },
   text: {
     flex: 1,
     marginTop: 80,
-    alignItems: "center"
+    alignItems: 'center',
   },
   containerResults: {
     backgroundColor: Colors.BEIGE,
-    alignItems: "center"
+    alignItems: 'center',
   },
   coffeeItem: {
     backgroundColor: Colors.BEIGE_LIGHT,
@@ -237,7 +240,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.5,
     shadowRadius: 1,
-    elevation: 1
-  }
+    elevation: 1,
+  },
 });
-
