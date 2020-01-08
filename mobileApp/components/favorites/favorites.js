@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   Text,
   AsyncStorage,
@@ -90,7 +90,8 @@ export default class Search extends Component {
         const allCoffees = responseJson.map(index => ({
           coffeeId: index._id,
           coffeeName: index.Name,
-          imagePath: index.ImagePath
+          imagePath: index.ImagePath,
+          content: index.Content
         }));
         this.setState({ allCoffees });
       }
@@ -105,67 +106,144 @@ export default class Search extends Component {
 
   render() {
     const CoffeeItem = ({ coffeeId, coffeeName, imagePath, content }) => {
+      let [collapse, changeCollapse] = useState(true);
       let favorite;
+      const handleClick = () => {
+        changeCollapse(!collapse)
+      };
       if (this.state.favoritesId.includes(coffeeId)) {
         favorite= true;
         return(
             <View style={styles.coffeeItem}>
-              <View
-                  style={{
-                    flexDirection: "row",
-                    marginTop: 10,
-                    justifyContent: "space-between"
-                  }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Image
-                      source={{ uri: imagePath }}
-                      style={{ width: 70, height: 70, marginLeft:10 }}
-                  />
-                  <Text
-                      style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
-                  >
-                    {coffeeName}
-                  </Text>
-                </View>
-                <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      marginRight: 15
-                    }}
-                >
-                  <TouchableOpacity
-                      onPress={() => {
-                        {
-                          favorite
-                              ? this.removeFavorite(coffeeId)
-                              : this.storeFavorites(coffeeId);
-                        }
-                        favorite = !favorite;
+              { collapse ?
+                  <View
+                      style={{
+                        flexDirection: "row",
+                        marginTop: 10,
+                        justifyContent: "space-between",
+                        alignSelf: 'flex-start'
                       }}
                   >
-                    <Icon
-                        name={favorite ? "favorite" : "favorite-border"}
-                        size={30}
-                        color={Colors.BROWN_LIGHT}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View
+                    <View style={{ flexDirection: "row" }}>
+                      <Image
+                          source={{ uri: imagePath }}
+                          style={{ width: 70, height: 70, marginLeft:10 }}
+                      />
+                      <Text
+                          style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
+                      >
+                        {coffeeName}
+                      </Text>
+                    </View>
+                    <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                          marginRight: 15,
+                        }}
+                    >
+                      <TouchableOpacity
+                          onPress={() => {
+                            {
+                              favorite
+                                  ? this.removeFavorite(coffeeId)
+                                  : this.storeFavorites(coffeeId);
+                            }
+                            favorite = !favorite;
+                          }}
+                      >
+                        <Icon
+                            name={favorite ? "favorite" : "favorite-border"}
+                            size={30}
+                            color={Colors.BROWN_LIGHT}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  :
+                  <View
+                      style={{
+                        flex: 1,
+                        marginTop: 10,
+                        justifyContent: "space-between",
+                      }}
+                  >
+                    <View style={{
+                      flex: 1,
+                      flexDirection: "column"
+                    }}>
+                      <View style={{ flexDirection: "row" }}>
+                        <Image
+                            source={{ uri: imagePath }}
+                            style={{ width: 70, height: 70, marginLeft:10 }}
+                        />
+                        <Text
+                            style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
+                        >
+                          {coffeeName}
+                        </Text>
+                        <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "flex-end",
+                              marginRight: 10
+                            }}
+                        >
+                          <TouchableOpacity
+                              onPress={() => {
+                                {
+                                  favorite
+                                      ? this.removeFavorite(coffeeId)
+                                      : this.storeFavorites(coffeeId);
+                                }
+                                favorite = !favorite;
+                              }}
+                          >
+                            <Icon
+                                name={favorite ? "favorite" : "favorite-border"}
+                                size={30}
+                                color={Colors.BROWN_LIGHT}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </View>
+                    <View style = {{
+                      flex: 1,
+                      flexDirection: "column",
+                      marginVertical: 10,
+                      marginHorizontal: 10,
+                      justifyContent: "space-between",
+                      alignSelf: "flex-start"
+                    }}>
+                      <Text style={[Typography.FONT_MED_BROWN_DARK]}>
+                        {content.map( i => { return '• ' + i + '\n'})}
+                      </Text>
+                    </View>
+                  </View>
+              }
+              <TouchableOpacity
                   style={{
                     flexDirection: "row",
                     justifyContent: "flex-end",
                     alignItems: "center",
                     marginBottom: 10
                   }}
+                  onPress={handleClick}
               >
-                <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
-                <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT} />
-              </View>
+                {collapse ?
+                    <View style={{flexDirection: "row"}}>
+                      <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
+                      <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT}/>
+                    </View>
+                    :
+                    <View style={{flexDirection: "row"}}>
+                      <Text style={Typography.FONT_MED_BROWN_DARK}> Hide recipe</Text>
+                      <Icon name="arrow-drop-up" size={30} color={Colors.BROWN_LIGHT}/>
+                    </View>
+                }
+              </TouchableOpacity>
             </View>
-
         );
       }
       else{return null}
@@ -184,26 +262,26 @@ export default class Search extends Component {
             </View>
             <View style={{ flex: 8 }}>
               <SafeAreaView style={styles.containerResults}>
-              {this.state.favoritesId !== null  ? (
-                <FlatList
-                data={this.state.allCoffees}
-                extraData={this.state}
-                renderItem={({ item }) => (
-                <TouchableOpacity>
-                <CoffeeItem
-                coffeeId={item.coffeeId}
-                coffeeName={item.coffeeName}
-                imagePath={item.imagePath}
-                content={item.content}
-                />
-                </TouchableOpacity>
-                )}
-                keyExtractor={item => item.coffeeId}
-                />
+                {this.state.favoritesId !== null  ? (
+                    <FlatList
+                        data={this.state.allCoffees}
+                        extraData={this.state}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity>
+                              <CoffeeItem
+                                  coffeeId={item.coffeeId}
+                                  coffeeName={item.coffeeName}
+                                  imagePath={item.imagePath}
+                                  content={item.content}
+                              />
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={item => item.coffeeId}
+                    />
                 ) :(
                     <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-                <Text style={Typography.FONT_MED_BROWN_DARK}>You don't have any favorites</Text></View>)
-         }
+                      <Text style={Typography.FONT_MED_BROWN_DARK}>You don't have any favorites</Text></View>)
+                }
               </SafeAreaView>
             </View>
           </View>
@@ -230,7 +308,6 @@ const styles = StyleSheet.create({
   coffeeItem: {
     backgroundColor: Colors.BEIGE_LIGHT,
     width: 322,
-    height: 110,
     marginVertical: 8,
     borderRadius: 10,
     shadowColor: Colors.BLACK,

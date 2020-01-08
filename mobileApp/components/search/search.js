@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
     Text,
     AsyncStorage,
@@ -171,7 +171,7 @@ export default class Search extends Component {
                     coffeeId: index._id,
                     coffeeName: index.Name,
                     imagePath: index.ImagePath,
-                    content:index.Content
+                    content: index.Content
                 }));
                 this.setState({ allCoffees, allCoffeesCopy:allCoffees });
             }
@@ -214,66 +214,144 @@ export default class Search extends Component {
     render() {
         const screenWidth = Math.round(Dimensions.get("window").width);
         const CoffeeItem = ({ coffeeId, coffeeName, imagePath, content }) => {
+            let [collapse, changeCollapse] = useState(true);
             let favorite;
+            const handleClick = () => {
+                changeCollapse(!collapse)
+            };
             if (this.state.favoritesId.includes(coffeeId)) {
                 favorite = true;
             }
             return (
                 <View style={styles.coffeeItem}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            marginTop: 10,
-                            justifyContent: "space-between"
-                        }}
-                    >
-                        <View style={{ flexDirection: "row" }}>
-                            <Image
-                                source={{ uri: imagePath }}
-                                style={{ width: 70, height: 70, marginLeft:10 }}
-                            />
-                            <Text
-                                style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
-                            >
-                                {coffeeName}
-                            </Text>
-                        </View>
+                    { collapse ?
                         <View
                             style={{
                                 flexDirection: "row",
-                                justifyContent: "flex-end",
-                                marginRight: 15
+                                marginTop: 10,
+                                justifyContent: "space-between",
+                                alignSelf: 'flex-start'
                             }}
                         >
-                            <TouchableOpacity
-                                onPress={() => {
-                                    {
-                                        favorite
-                                            ? this.removeFavorite(coffeeId)
-                                            : this.storeFavorites(coffeeId);
-                                    }
-                                    favorite = !favorite;
+                            <View style={{ flexDirection: "row" }}>
+                                <Image
+                                    source={{ uri: imagePath }}
+                                    style={{ width: 70, height: 70, marginLeft:10 }}
+                                />
+                                <Text
+                                    style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
+                                >
+                                    {coffeeName}
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    justifyContent: "flex-end",
+                                    marginRight: 15
                                 }}
                             >
-                                <Icon
-                                    name={favorite ? "favorite" : "favorite-border"}
-                                    size={30}
-                                    color={Colors.BROWN_LIGHT}
-                                />
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        {
+                                            favorite
+                                                ? this.removeFavorite(coffeeId)
+                                                : this.storeFavorites(coffeeId);
+                                        }
+                                        favorite = !favorite;
+                                    }}
+                                >
+                                    <Icon
+                                        name={favorite ? "favorite" : "favorite-border"}
+                                        size={30}
+                                        color={Colors.BROWN_LIGHT}
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                    <View
+                        :
+                        <View
+                            style={{
+                                flex: 1,
+                                marginTop: 10,
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <View style={{
+                                flex: 1,
+                                flexDirection: "column"
+                            }}>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Image
+                                        source={{ uri: imagePath }}
+                                        style={{ width: 70, height: 70, marginLeft:10 }}
+                                    />
+                                    <Text
+                                        style={[Typography.FONT_MED_BROWN_DARK_BOLD, { marginLeft: 10 }]}
+                                    >
+                                        {coffeeName}
+                                    </Text>
+                                    <View
+                                        style={{
+                                            flexDirection: "row",
+                                            justifyContent: "flex-end",
+                                            marginRight: 10
+                                        }}
+                                    >
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                {
+                                                    favorite
+                                                        ? this.removeFavorite(coffeeId)
+                                                        : this.storeFavorites(coffeeId);
+                                                }
+                                                favorite = !favorite;
+                                            }}
+                                        >
+                                            <Icon
+                                                name={favorite ? "favorite" : "favorite-border"}
+                                                size={30}
+                                                color={Colors.BROWN_LIGHT}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                            <View style = {{
+                                flex: 1,
+                                flexDirection: "column",
+                                marginVertical: 10,
+                                marginHorizontal: 10,
+                                justifyContent: "space-between",
+                                alignSelf: "flex-start"
+                            }}>
+                                <Text style={[Typography.FONT_MED_BROWN_DARK]}>
+                                    {content.map( i => { return '• ' + i + '\n'})}
+                                </Text>
+                            </View>
+                        </View>
+                    }
+                    <TouchableOpacity
                         style={{
                             flexDirection: "row",
                             justifyContent: "flex-end",
                             alignItems: "center",
                             marginBottom: 10
                         }}
+                        onPress={handleClick}
                     >
-                        <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
-                        <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT} />
-                    </View>
+                        {collapse ?
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={Typography.FONT_MED_BROWN_DARK}>Show recipe</Text>
+                                <Icon name="arrow-drop-down" size={30} color={Colors.BROWN_LIGHT}/>
+                            </View>
+                            :
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={Typography.FONT_MED_BROWN_DARK}> Hide recipe</Text>
+                                <Icon name="arrow-drop-up" size={30} color={Colors.BROWN_LIGHT}/>
+                            </View>
+                        }
+                    </TouchableOpacity>
                 </View>
             );
         };
@@ -281,9 +359,9 @@ export default class Search extends Component {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.container}>
                     <View style = {{flexDirection:"row", alignItems:"space-between"}}>
-                    <View style={styles.text}>
-                        <Text style={Typography.FONT_H2_ORANGE}> Your guide to making the perfect cup of coffee. </Text>
-                    </View>
+                        <View style={styles.text}>
+                            <Text style={Typography.FONT_H2_ORANGE}> Your guide to making the perfect cup of coffee. </Text>
+                        </View>
                         <TouchableOpacity
                             style={styles.filterButton}
                             onPress={() => this.setModalVisible()}
@@ -291,79 +369,79 @@ export default class Search extends Component {
                             <Icon name="filter-list" size={30} color={Colors.ORANGE_LIGHT} />
                         </TouchableOpacity>
 
-                    <Modal
-                        visible={this.state.modalVisible}
-                        animationType="slide"
-                        transparent={false}
-                    >
-
-                    <View style={styles.modalContainer}>
-                        <TouchableOpacity
-                            onPress={() => this.setModalVisible()}
-                            style={{ marginLeft: (screenWidth * 0.1) / 2 }}
+                        <Modal
+                            visible={this.state.modalVisible}
+                            animationType="slide"
+                            transparent={false}
                         >
-                            <Icon name={"chevron-left"} size={40} />
-                        </TouchableOpacity>
-                        <Text style={[Typography.FONT_H2_BROWN, { alignSelf: "center" }]}>
-                            Show only results containing:
-                        </Text>
-                        <FlatList
-                            data={this.state.filters}
-                            extraData={this.state}
-                            renderItem={({ item }) => (
+
+                            <View style={styles.modalContainer}>
                                 <TouchableOpacity
-                                    onPress={() => this.setFilter(item)}
-                                    style={{
-                                        justifyContent: "center",
-                                        height: 40,
-                                        backgroundColor:
-                                            this.state.selectedFilter === item
-                                                ? Colors.ORANGE_LIGHT
-                                                : Colors.WHITE
-                                    }}
+                                    onPress={() => this.setModalVisible()}
+                                    style={{ marginLeft: (screenWidth * 0.1) / 2 }}
                                 >
-                                    <Text
+                                    <Icon name={"chevron-left"} size={40} />
+                                </TouchableOpacity>
+                                <Text style={[Typography.FONT_H2_BROWN, { alignSelf: "center" }]}>
+                                    Show only results containing:
+                                </Text>
+                                <FlatList
+                                    data={this.state.filters}
+                                    extraData={this.state}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            onPress={() => this.setFilter(item)}
+                                            style={{
+                                                justifyContent: "center",
+                                                height: 40,
+                                                backgroundColor:
+                                                    this.state.selectedFilter === item
+                                                        ? Colors.ORANGE_LIGHT
+                                                        : Colors.WHITE
+                                            }}
+                                        >
+                                            <Text
+                                                style={[
+                                                    Typography.FONT_MED_BROWN_DARK,
+                                                    {
+                                                        width: screenWidth * 0.85,
+                                                        marginLeft: (screenWidth * 0.15) / 2
+                                                    }
+                                                ]}
+                                            >
+                                                {item}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    keyExtractor={item =>item}
+                                    style={{ marginVertical: 30 }}
+                                />
+                                {this.state.selectedFilter ? (
+                                    <TouchableOpacity
+                                        style={styles.applyButton}
+                                        onPress={() => this.applyFilter()}
+                                    >
+                                        <Text
+                                            style={[Typography.FONT_H4_GREY, { textAlign: "center" }]}
+                                        >
+                                            Apply
+                                        </Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <View
                                         style={[
-                                            Typography.FONT_MED_BROWN_DARK,
-                                            {
-                                                width: screenWidth * 0.85,
-                                                marginLeft: (screenWidth * 0.15) / 2
-                                            }
+                                            styles.applyButton,
+                                            { backgroundColor: Colors.BROWN_LIGHT }
                                         ]}
                                     >
-                                        {item}
-                                    </Text>
-                                </TouchableOpacity>
-                            )}
-                            keyExtractor={item =>item}
-                            style={{ marginVertical: 30 }}
-                        />
-                        {this.state.selectedFilter ? (
-                            <TouchableOpacity
-                                style={styles.applyButton}
-                                onPress={() => this.applyFilter()}
-                            >
-                                <Text
-                                    style={[Typography.FONT_H4_GREY, { textAlign: "center" }]}
-                                >
-                                    Apply
-                                </Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <View
-                                style={[
-                                    styles.applyButton,
-                                    { backgroundColor: Colors.BROWN_LIGHT }
-                                ]}
-                            >
-                                <Text
-                                    style={[Typography.FONT_H4_GREY, { textAlign: "center" }]}
-                                >
-                                    Apply
-                                </Text>
-                            </View>
+                                        <Text
+                                            style={[Typography.FONT_H4_GREY, { textAlign: "center" }]}
+                                        >
+                                            Apply
+                                        </Text>
+                                    </View>
 
-                        )}</View></Modal>
+                                )}</View></Modal>
 
                     </View>
                     <View style={styles.searchBar}>
@@ -455,7 +533,6 @@ const styles = StyleSheet.create({
     coffeeItem: {
         backgroundColor: Colors.BEIGE_LIGHT,
         width: 322,
-        height: 110,
         marginVertical: 8,
         borderRadius: 10,
         shadowColor: Colors.BLACK,
