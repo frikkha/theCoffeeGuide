@@ -63,29 +63,34 @@ export default class Search extends Component {
     }
 
     filter(ingredient) {
-      const filtered = [];
-      if (this.state.searched) {
-        this.state.searchResultsCopy.map((index) => {
-          console.log(index);
-          index.content.map((index2) => {
-            console.log(index2);
-            if (index2.includes(ingredient)) {
-              filtered.push(index);
-            }
+      if(ingredient !== null) {
+        const filtered = [];
+        if (this.state.searchResults) {
+          this.state.searchResultsCopy.map((index) => {
+            console.log(index);
+            index.content.map((index2) => {
+              console.log(index2);
+              if (index2.includes(ingredient)) {
+                filtered.push(index);
+              }
+            });
           });
-        });
-        this.setState({ searchResults: filtered });
-      } else {
-        this.state.allCoffeesCopy.map((index) => {
-          console.log(index);
-          index.content.map((index2) => {
-            console.log(index2);
-            if (index2.includes(ingredient)) {
-              filtered.push(index);
-            }
+          this.setState({searchResults: filtered});
+        } else {
+          this.state.allCoffeesCopy.map((index) => {
+            console.log(index);
+            index.content.map((index2) => {
+              console.log(index2);
+              if (index2.includes(ingredient)) {
+                filtered.push(index);
+              }
+            });
           });
-        });
-        this.setState({ allCoffees: filtered });
+          this.setState({allCoffees: filtered});
+        }
+      }
+      else{
+        (this.state.searchResults ? this.setState({searchResults:this.state.searchResultsCopy}) : this.setState({allCoffees:this.state.allCoffeesCopy}))
       }
     }
 
@@ -390,7 +395,7 @@ export default class Search extends Component {
 
                 <View style={styles.modalContainer}>
                   <TouchableOpacity
-                    onPress={() => this.setModalVisible()}
+                    onPress={() => {this.setModalVisible() ; this.filter(null); this.setState({selectedFilter:null})}}
                     style={{ marginLeft: (screenWidth * 0.1) / 2 }}
                   >
                     <Icon name="chevron-left" size={40} />
@@ -487,7 +492,7 @@ export default class Search extends Component {
               <SafeAreaView style={styles.containerResults}>
                 <FlatList
                   data={
-                                    this.state.searchResults && this.state.searched
+                                    this.state.searchResults
                                       ? this.state.searchResults
                                       : this.state.allCoffees
                                 }
