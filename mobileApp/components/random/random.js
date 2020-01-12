@@ -76,13 +76,12 @@ export default class Random extends Component {
           <View style={styles.randomView}>
             {this.state.randomCoffee === null ? null : (
               <View style={styles.randomCoffee}>
-                <Image source={{ uri: this.state.randomCoffee.imagePath }} style={{ width: 100, height: 100, alignSelf: 'center' }} />
                 <Text style={[Typography.FONT_H4_BROWN_LIGHT, { marginTop: 8 }]}>
                   {this.state.randomCoffee.coffeeName}
                 </Text>
                 <View style={styles.line} />
                 {this.state.randomCoffee.content.map((index) => (
-                  <Text key={index.toString()} style={[Typography.FONT_MED_BROWN_DARK]}>{index}</Text>))}
+                  <Text key={index.toString()} style={[Typography.FONT_MED_BROWN_DARK]}>{'• ' + index}</Text>))}
               </View>
             )}
           </View>
@@ -120,6 +119,7 @@ const styles = StyleSheet.create({
   randomCoffee: {
     width: 300,
     height: 150,
+    marginTop: 30
   },
   randomView: {
     flex: 6,
